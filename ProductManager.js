@@ -14,7 +14,7 @@ class ProductManager
         {
             if(fs.existsSync(this.path)) 
             {
-                const products = await fs.promises.readFile(productFiles.path, 'utf8');
+                const products = await fs.promises.readFile(this.path, 'utf8');
                 const productsJS = JSON.parse(products);
                 return productsJS;
             } 
@@ -79,7 +79,7 @@ class ProductManager
             else 
             {
                 productsFile.splice(productIndex, 1);
-                await fs.promises.writeFile(productFiles.path, JSON.stringify(productsFile));
+                await fs.promises.writeFile(this.path, JSON.stringify(productsFile));
                 console.log(`El producto con el ID ${idProduct} fue eliminado exitosamente`);
             }
         } 
@@ -108,7 +108,7 @@ class ProductManager
                 id: idProduct, 
                 };
                 productsFile[productIndex] = updatedProduct;
-                await fs.promises.writeFile(productFiles.path, JSON.stringify(productsFile));
+                await fs.promises.writeFile(this.path, JSON.stringify(productsFile));
                 console.log(`Producto actualizado correctamente`);
             }
         } 
@@ -135,7 +135,7 @@ class ProductManager
     {
         try 
         {
-            const product = this.#existingProduct(idProduct);
+            const product = await this.#existingProduct(idProduct);
             if (!product) 
             {
                 console.log('No encontrado');
