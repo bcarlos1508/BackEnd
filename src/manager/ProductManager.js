@@ -1,11 +1,12 @@
 const fs = require('fs');
 
-class ProductManager 
+export default class ProductManager 
 {
     constructor() 
     {
+
         this.idCounter = 0;
-        this.path = "./products.json";
+        this.path = '../products.json';
     }
 
     async getProducts() 
