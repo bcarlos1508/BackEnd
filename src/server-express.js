@@ -1,12 +1,12 @@
 import express from 'express';
-import ProductManager from './manager/ProductManager.js';
+import ProductManager from '../ProductManager.js';
 
 const app=express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
-const productManager = new ProductManager('./product.json')
+const productManager = new ProductManager('./products.json')
 
 app.get('/products', async(req, res) => {
     const { limit } = req.query;

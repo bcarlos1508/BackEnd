@@ -1,1 +1,1 @@
-[{"id":1,"title":"produto de prueba","description":"Este es un producto prueba","price":201,"thumbnail":"Sin    imagen","code":"abc1234","stock":26}]
+[{"id":1,"name":"Notebook HP","price":200000,"stock":50},{"id":2,"name":"Notebook Lenovo","price":180000,"stock":50},{"id":3,"name":"Notebook Asus","price":190000,"stock":40},{"id":4,"name":"Notebook Bangho","price":150000,"stock":90},{"id":5,"name":"Notebook Compaq","price":120000,"stock":120},{"id":6,"name":"Notebook Commodore","price":100000,"stock":30}]

@@ -1,13 +1,16 @@
 {
-  "name": "entrega2-backend",
+  "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "ProductManager.js",
+  "main": "./src/server-express.js",
   "type": "module",
   "scripts": {
-    "start:express": "nodemon  server-express.js"
+    "start:express": "nodemon server-express.js"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
