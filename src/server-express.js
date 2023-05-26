@@ -8,7 +8,7 @@ app.use(express.urlencoded({extended:true}));
 
 const productManager = new ProductManager('./products.json')
 
-app.get('/products', async(req, res) => {
+app.get('/api/products', async(req, res) => {
     const { limit } = req.query;
     try {
         const products = await productManager.getProducts(limit);
@@ -19,7 +19,7 @@ app.get('/products', async(req, res) => {
     }
 });
 
-app.get('/products/:id', async(req, res) =>{
+app.get('api/products/:id', async(req, res) =>{
     try {
         const { id } = req.params;
         const product = await productManager.getProductById(Number(id));
@@ -33,7 +33,7 @@ app.get('/products/:id', async(req, res) =>{
     }
 });
 
-app.post('/products', async(req, res) =>{
+app.post('/api/products', async(req, res) =>{
     try {
         console.log( req.body);
         const product = req.body;
@@ -44,7 +44,7 @@ app.post('/products', async(req, res) =>{
     }
 });
 
-app.put('/products/:id', async(req, res) =>{
+app.put('/api/products/:id', async(req, res) =>{
     try {
         const { name, price, stock } = req.body;
         const product = req.body;
@@ -60,7 +60,7 @@ app.put('/products/:id', async(req, res) =>{
         res.status(404).json({ message: error.message });
 }});
 
-app.delete('/products/:id', async(req, res) =>{
+app.delete('/api/products/:id', async(req, res) =>{
     try {
         const { id } = req.params;
         const products = await productManager.getProducts();  
@@ -75,7 +75,7 @@ app.delete('/products/:id', async(req, res) =>{
     }
 });
 
-app.delete('/products', async(req, res) =>{
+app.delete('/api/products', async(req, res) =>{
     try {
         await productManager.deleteAllProducts();
         res.send('productos eliminados exitosamente')

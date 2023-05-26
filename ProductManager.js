@@ -8,7 +8,7 @@ export default class ProductManager
         this.path = path;
     }
 
-    async getProducts() 
+    async getProducts(limit) 
     {
         try 
         {
@@ -16,6 +16,10 @@ export default class ProductManager
             {
                 const products = await fs.promises.readFile(this.path, 'utf8');
                 const productsJS = JSON.parse(products);
+                if (limit) 
+                {
+                    return productsJS.slice(0, limit);
+                }
                 return productsJS;
             } 
             else 
@@ -29,11 +33,19 @@ export default class ProductManager
         }
     }
 
-    async createProduct(title, description, price, thumbnail, code, stock) 
+    async manageProduct(limit) {
+        try {
+          return this.getProducts(limit);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+    async createProduct(title, description, price, thumbnail, code, stock, limit) 
     {
         try 
         {
-            const productsFile=await this.getProducts();
+            const productsFile=await this.getProducts(limit);
             const duplicateCode = productsFile.find
             (
                 (product) => product.code === code
@@ -55,6 +67,7 @@ export default class ProductManager
                     thumbnail,
                     code,
                     stock,
+                    limit,
                 };
                 productsFile.push(product);
                 await fs.promises.writeFile(this.path, JSON.stringify(productsFile));
@@ -66,11 +79,11 @@ export default class ProductManager
         }
     }
 
-    async deleteProduct(idProduct) 
+    async deleteProduct(idProduct, limit) 
     {
         try 
         {
-            const productsFile = await this.getProducts();
+            const productsFile = await this.getProducts(limit);
             const productIndex = productsFile.findIndex((product) => product.id === idProduct);  
             if (productIndex === -1) 
             {
@@ -89,11 +102,11 @@ export default class ProductManager
         }
     }
 
-    async updateProduct(idProduct, updatedFields) 
+    async updateProduct(idProduct, updatedFields, limit) 
     {
         try 
         {
-            const productsFile = await this.getProducts();
+            const productsFile = await this.getProducts(limit);
             const productIndex = productsFile.findIndex((product) => product.id === idProduct);  
             if (productIndex === -1) 
             {
@@ -131,11 +144,11 @@ export default class ProductManager
         }
     }
 
-    async getProductById(idProduct) 
+    async getProductById(idProduct, limit) 
     {
         try 
         {
-            const product = await this.#existingProduct(idProduct);
+            const product = await this.#existingProduct(idProduct, limit);
             if (!product) 
             {
                 console.log('No encontrado');
