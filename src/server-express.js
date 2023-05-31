@@ -1,90 +1,51 @@
 import express from 'express';
-import ProductManager from '../ProductManager.js';
+import handlebars from 'express-handlebars';
+import cartsRouter from './routes/carts-router.js';
+import viewsRouter from './routes/views-router.js';
+import productsRouter from './routes/products-router.js';
+import { __dirname } from './path.js';
+import { Server } from 'socket.io';
 
 const app=express();
+const port = 8080;
 
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
 
-const productManager = new ProductManager('./products.json')
-
-app.get('/api/products', async(req, res) => {
-    const { limit } = req.query;
+const http = app.listen(port, () => {
     try {
-        const products = await productManager.getProducts(limit);
-        res.status(200).json(products);
-    } catch (error) {
-        res.status(404).json({ message: error.message });
-        console.log(error);
+        console.log(`Listening on port ${port}`);
+    } catch (err) {
+        res.status(400).json({ message: err.message })
+        console.log(err)
     }
-});
+})
 
-app.get('api/products/:id', async(req, res) =>{
-    try {
-        const { id } = req.params;
-        const product = await productManager.getProductById(Number(id));
-        if(product){
-            res.status(200).json({ message: 'producto encontrado', product})
-        } else {
-            res.status(400).send('producto no encontrado')
-        }
-    } catch (error) {
-        res.status(404).json({ message: error.message });
-    }
-});
+const io = new Server(http)
 
-app.post('/api/products', async(req, res) =>{
-    try {
-        console.log( req.body);
-        const product = req.body;
-        const newProduct = await productManager.createProduct(product);
-        res.json(newProduct);
-    } catch (error) {
-        res.status(404).json({ message: error.message });
-    }
-});
+app.engine('handlebars', handlebars.engine());
+app.set('view engine', 'handlebars');
+app.set('views', __dirname + '/views');
+app.use(express.static(__dirname + '/public'));
+app.use('/products', productsRouter)
+app.use('/carts', cartsRouter)
+app.use('/views', viewsRouter)
 
-app.put('/api/products/:id', async(req, res) =>{
-    try {
-        const { name, price, stock } = req.body;
-        const product = req.body;
-        const { id } = req.params;
-        const productsFile = await productManager.getProductById(Number(id));
-        if(productsFile){
-            await productManager.updateProduct(product, Number(id));
-            res.send('producto actualizado correctamente!!')
-        } else {
-            res.status(404).send('producto no encontrado')
-        }
-    } catch (error) {
-        res.status(404).json({ message: error.message });
-}});
-
-app.delete('/api/products/:id', async(req, res) =>{
-    try {
-        const { id } = req.params;
-        const products = await productManager.getProducts();  
-        if(products.length > 0) {
-            await productManager.deleteProductById(Number(id));
-            res.send(`producto con id ${id} eliminado con exito`);
-        } else {
-            res.send(`producto con id ${id} no encontrado`)
-        }
-    } catch (error) {
-        res.status(404).json({ message: error.message });
-    }
-});
-
-app.delete('/api/products', async(req, res) =>{
-    try {
-        await productManager.deleteAllProducts();
-        res.send('productos eliminados exitosamente')
-    } catch (error) {
-        res.status(404).json({ message: error.message });
-    }
-});
-
-const PORT = 8080;
-app.listen(PORT, ()=>{
-    console.log(`server ok en puerto ${PORT}`);
+io.on('connection', async (socket) => {
+    console.log('User connected (ID: ', socket.id, ')');
+    socket.on('disconnect', () => {
+        console.log('User disconnected (ID:', socket.id, ')');
+    })
+    socket.on('message', (message) => {
+        console.log(message)
+    })
+    socket.emit('productsArray', await productManager.getProducts());
+    socket.on('newProduct', async (prod) => {
+        await productManager.addProduct(prod);
+        const arrayUpdate = await productManager.getProducts();
+        socket.emit('arrayUpdate', arrayUpdate);
+        socket.on('update', (update) => {
+            console.log(update);
+        })
+    })
 })

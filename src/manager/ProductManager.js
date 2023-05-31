@@ -20,7 +20,7 @@ export default class ProductManager
                 {
                     return productsJS.slice(0, limit);
                 }
-                return productsJS;
+                return productsJS;  
             } 
             else 
             {
