@@ -1,6 +1,5 @@
 const socket = io();
 const products = document.getElementById('products__list');
-
 const form = document.getElementById('form__prods');
 const inputTitle = document.getElementById('input__prod__title');
 const inputPrice = document.getElementById('input__prod__price');

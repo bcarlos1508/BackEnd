@@ -5,7 +5,9 @@ import viewsRouter from './routes/views-router.js';
 import productsRouter from './routes/products-router.js';
 import { __dirname } from './path.js';
 import { Server } from 'socket.io';
+import { productManager } from "../manager/ProductManager.js";
 
+const productManager = new productManager();
 const app=express();
 const port = 8080;
 

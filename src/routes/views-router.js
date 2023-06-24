@@ -1,8 +1,12 @@
 import { Router } from 'express'
 const router = Router();
+const intance = new ProductManager()
 
 router.get('/index', async (req, res) => {
-    res.render('index')
+    const data = await intance.getProducts()
+    res.render('index', {
+        product: data
+    })
 });
 
 router.get('/products-realtime', async (req, res) => {
